@@ -7,7 +7,6 @@ import torch.nn.functional as F
 import argparse
 import scipy.io
 import sys
-sys.path.append('/users/trec/brochard/pp_gd')
 from utils_gpu import pos_to_im3
 
 parser = argparse.ArgumentParser()
