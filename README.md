@@ -11,9 +11,21 @@ source activate pp
 - to install other versions of pytorch, 
 - see https://pytorch.org/get-started/previous-versions/
 
-conda install scipy
+- conda install scipy
 
-conda install pytorch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 cudatoolkit=11.0 -c pytorch
+- conda install pytorch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 cudatoolkit=11.0 -c pytorch
+
+- pip install matplotlib
+
+- pip install appdirs
+
+- pip install tqdm
+
+
+* to run the demos:
+  * for periodic case
+
+
 
 #pip install scikit-cuda
 #pip install cupy-cuda110
