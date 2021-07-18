@@ -7,6 +7,11 @@ import torch.nn.functional as F
 import argparse
 import scipy.io
 import sys
+<<<<<<< HEAD
+=======
+# here, put the path to the directory
+sys.path.append('path/to/pp_syn')
+>>>>>>> 66083cd9cccf843b9ed1eda23228a2cddca9dc8d
 from utils_gpu import pos_to_im3
 
 parser = argparse.ArgumentParser()

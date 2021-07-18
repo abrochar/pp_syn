@@ -1,25 +1,28 @@
-- code has too many files: 402.83MB
-- how to install
 
-export PATH="$PATH:~/anaconda3/bin"
+* Setup
 
-conda create --name pp python=3.6
-source activate pp
+export PATH="$PATH:~/anaconda3/bin"  
 
-- install packages on Linux, 
-- to install other versions of pytorch, 
-- see https://pytorch.org/get-started/previous-versions/
+conda create --name pp python=3.6  
 
-conda install scipy
-conda install pytorch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 cudatoolkit=11.0 -c pytorch
+source activate pp  
 
-pip install scikit-cuda
-pip install cupy-cuda110
+install required packages:  
+- conda install scipy  
+- conda install pytorch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 cudatoolkit=11.0 -c pytorch  
+- pip install matplotlib  
+- pip install appdirs  
+- pip install tqdm  
 
-python setup.py install
+add path to directory in example/pp_lbfgs2_par.py, line 11 (maybe do this automatically?)  
 
-- how to run the demo
-show one example of peridoic case
-show one example of aperodic case
-
+to run the demo, 
+* for periodic case, voronoi example:
+```bash
+python example/pp_pp_lbfgs2_par.py
+```
+* aperiodic, or turbulence:
+```bash
+python example/pp_pp_lbfgs2_par.py --periodic False --data turbulence
+```
 
