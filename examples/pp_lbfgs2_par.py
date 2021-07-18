@@ -6,12 +6,11 @@ import scipy.optimize as opt
 import torch.nn.functional as F
 import argparse
 import scipy.io
-import sys
-<<<<<<< HEAD
-=======
+import sys,os
 # here, put the path to the directory
-sys.path.append('path/to/pp_syn')
->>>>>>> 66083cd9cccf843b9ed1eda23228a2cddca9dc8d
+sys.path.append(os.getcwd()) 
+# '/home/sixzhang/pp_syn/')
+#sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 from utils_gpu import pos_to_im3
 
 parser = argparse.ArgumentParser()
@@ -23,7 +22,6 @@ parser.add_argument('--sw', type=bool, default=False)
 parser.add_argument('--periodic', type=bool, default=True)
 parser.add_argument('--normalize', type=bool, default=False)
 opts = parser.parse_args()
-
 
 # to fix random seed
 
