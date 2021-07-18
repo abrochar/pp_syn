@@ -11,7 +11,7 @@ install required packages:
 - pip install appdirs  
 - pip install tqdm  
 
-add path to directory in example/pp_lbfgs2_par.py (maybe do this automatically?)  
+add path to directory in example/pp_lbfgs2_par.py, line 11 (maybe do this automatically?)  
 
 to run the demo, 
 * for periodic case, voronoi example:
