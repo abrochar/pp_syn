@@ -13,7 +13,8 @@ install required packages:
 
 add path to directory in example/pp_lbfgs2_par.py (maybe do this automatically?)  
 
-* to run the demo, for periodic case, voronoi example:
+to run the demo, 
+* for periodic case, voronoi example:
 ```bash
 python example/pp_pp_lbfgs2_par.py
 ```
