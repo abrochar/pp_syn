@@ -1,5 +1,5 @@
 
-* Setup
+# Setup
 
 export PATH="$PATH:~/anaconda3/bin"  
 
@@ -14,7 +14,7 @@ install required packages:
 - pip install appdirs  
 - pip install tqdm  
 
-* To run the demo, 
+# To run the demo 
 - for periodic case, voronoi example:
 ```bash
 python examples/pp_lbfgs2_par.py
@@ -24,5 +24,5 @@ python examples/pp_lbfgs2_par.py
 python examples/pp_lbfgs2_par.py --periodic False --data turbulence
 ```
 
-* Note
+# Note
 - The pytorch version should be adapted to your GPU environment, and it should not exceed 1.7.1.
