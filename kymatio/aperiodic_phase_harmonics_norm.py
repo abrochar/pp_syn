@@ -89,7 +89,7 @@ class PhaseHarmonics2d(object):
             self.hatpsi = torch.stack((self.hatpsi, self.hatpsi_shift), dim=2).reshape(J, L2*2, self.N, self.N, 2).contiguous()
 
         # load masks for aperiodicity
-        self.masks = maskns(J+1, M, N)  # (J, M, N)
+        self.masks = maskns(J, M, N)  # (J, M, N)
 
     def get_this_chunk(self, nb_chunks, chunk_id):
         # cut self.idx_wph into smaller pieces
@@ -135,19 +135,18 @@ class PhaseHarmonics2d(object):
 
         # j1=j2, k1=1, k2=0 or 1
         for n1 in range(dn+1):
-            for n2 in range(dn+1):
+            for n2 in range(1):
                 for j1 in range(J):
                     for ell1 in range(L2):
                         k1 = 1
                         j2 = j1
                         for ell2 in range(L2):
-                            if periodic_dis(ell1, ell2, L2) <= L:
+                            if periodic_dis(ell1, ell2, L2) <= dl:
                                 k2 = 0
                                 idx_la1.append((dn+1)*L2*j1+(dn+1)*ell1+n1)
                                 idx_la2.append((dn+1)*L2*j2+(dn+1)*ell2+n2)
                                 idx_k1.append(k1)
                                 idx_k2.append(k2)
-                            if (periodic_dis(ell1, ell2, L2) <= dl) and (1):
                                 k2 = 1
                                 idx_la1.append((dn+1)*L2*j1+(dn+1)*ell1+n1)
                                 idx_la2.append((dn+1)*L2*j2+(dn+1)*ell2+n2)
@@ -158,13 +157,13 @@ class PhaseHarmonics2d(object):
         # k2 = 0
         # j1 = j2
         for n1 in range(dn+1):
-            for n2 in range(dn+1):
+            for n2 in range(1):
                 for j1 in range(J):
                     for ell1 in range(L2):
                         k1=0
                         j2 = j1
                         for ell2 in range(L2):
-                            if periodic_dis(ell1, ell2, L2) <= L:
+                            if periodic_dis(ell1, ell2, L2) <= dl:
                                 k2 = 0
                                 idx_la1.append((dn+1)*L2*j1+(dn+1)*ell1+n1)
                                 idx_la2.append((dn+1)*L2*j2+(dn+1)*ell2+n2)
@@ -176,20 +175,14 @@ class PhaseHarmonics2d(object):
         # k2 = 0,1,2
         # j1+1 <= j2 <= min(j1+dj,J-1)
         for n1 in range(dn+1):
-            for n2 in range(dn+1):
+            for n2 in range(1):
                 for j1 in range(J):
                     for ell1 in range(L2):
                         k1 = 0
                         for j2 in range(j1+1,min(j1+dj+1,J)):
                             for ell2 in range(L2):
-                                if periodic_dis(ell1, ell2, L2) <= L:
-                                    k2 = 0
-                                    if (ell1 < L2) and (ell2 < L2):
-                                        idx_la1.append((dn+1)*L2*j1+(dn+1)*ell1+n1)
-                                        idx_la2.append((dn+1)*L2*j2+(dn+1)*ell2+n2)
-                                        idx_k1.append(k1)
-                                        idx_k2.append(k2)
-                                    for k2 in range(1,3):
+                                if periodic_dis(ell1, ell2, L2) <= dl:
+                                    for k2 in range(3):
                                         idx_la1.append((dn+1)*L2*j1+(dn+1)*ell1+n1)
                                         idx_la2.append((dn+1)*L2*j2+(dn+1)*ell2+n2)
                                         idx_k1.append(k1)
@@ -199,7 +192,7 @@ class PhaseHarmonics2d(object):
         # k2 = 2^(j2-j1)±dk
         # j1+1 <= j2 <= min(j1+dj,J-1)
         for n1 in range(dn+1):
-            for n2 in range(dn+1):
+            for n2 in range(1):
                 for j1 in range(J):
                     for ell1 in range(L2):
                         k1 = 1
@@ -286,7 +279,7 @@ class PhaseHarmonics2d(object):
                     hatx_bc = hatx_c[idxb,idxc,:,:,:] # (M,N,2)
                     hatxpsi_bc = cdgmm(hatpsi_la, hatx_bc) # (J,L2,M,N,2)
                     xpsi_bc = ifft2_c2c(hatxpsi_bc)
-                    xpsi_bc_m = x_psi_bc * self.masks[:-1,...].contiguous().view(J,1,M,N,1)
+                    xpsi_bc_m = x_psi_bc * self.masks.contiguous().view(J,1,M,N,1)
                     # reshape to (1,J*L,M,N,2)
                     xpsi_bc_flat = xpsi_bc_m.view(1,J*L2*(dn+1),M,N,2)
                     # select la1, et la2, P_c = number of |la1| in this chunk
@@ -315,6 +308,7 @@ class PhaseHarmonics2d(object):
             # submean from spatial M N
             xphi0_c = self.subinitmeanJ(xphi_c)
             xphi0_c = self.divinitstdJ(xphi0_c)
+            xphi0_c = xphi0_c * self.masks[-1,...].view(1,1,M,N,1)
             xphi0_mod = self.modulus(xphi0_c) # (nb,nc,M,N,2)
             xphi0_mod2 = mulcu(xphi0_mod,xphi0_mod) # (nb,nc,M,N,2)
             nb = hatx_c.shape[0]

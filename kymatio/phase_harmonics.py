@@ -130,19 +130,18 @@ class PhaseHarmonics2d(object):
 
         # j1=j2, k1=1, k2=0 or 1
         for n1 in range(dn+1):
-            for n2 in range(dn+1):
+            for n2 in range(1):
                 for j1 in range(J):
                     for ell1 in range(L2):
                         k1 = 1
                         j2 = j1
                         for ell2 in range(L2):
-                            if periodic_dis(ell1, ell2, L2) <= L:
+                            if periodic_dis(ell1, ell2, L2) <= dl:
                                 k2 = 0
                                 idx_la1.append((dn+1)*L2*j1+(dn+1)*ell1+n1)
                                 idx_la2.append((dn+1)*L2*j2+(dn+1)*ell2+n2)
                                 idx_k1.append(k1)
                                 idx_k2.append(k2)
-                            if (periodic_dis(ell1, ell2, L2) <= dl) and (1):
                                 k2 = 1
                                 idx_la1.append((dn+1)*L2*j1+(dn+1)*ell1+n1)
                                 idx_la2.append((dn+1)*L2*j2+(dn+1)*ell2+n2)
@@ -153,13 +152,13 @@ class PhaseHarmonics2d(object):
         # k2 = 0
         # j1 = j2
         for n1 in range(dn+1):
-            for n2 in range(dn+1):
+            for n2 in range(1):
                 for j1 in range(J):
                     for ell1 in range(L2):
                         k1=0
                         j2 = j1
                         for ell2 in range(L2):
-                            if periodic_dis(ell1, ell2, L2) <= L:
+                            if periodic_dis(ell1, ell2, L2) <= dl:
                                 k2 = 0
                                 idx_la1.append((dn+1)*L2*j1+(dn+1)*ell1+n1)
                                 idx_la2.append((dn+1)*L2*j2+(dn+1)*ell2+n2)
@@ -171,20 +170,14 @@ class PhaseHarmonics2d(object):
         # k2 = 0,1,2
         # j1+1 <= j2 <= min(j1+dj,J-1)
         for n1 in range(dn+1):
-            for n2 in range(dn+1):
+            for n2 in range(1):
                 for j1 in range(J):
                     for ell1 in range(L2):
                         k1 = 0
                         for j2 in range(j1+1,min(j1+dj+1,J)):
                             for ell2 in range(L2):
-                                if periodic_dis(ell1, ell2, L2) <= L:
-                                    k2 = 0
-                                    if (ell1 < L2) and (ell2 < L2):
-                                        idx_la1.append((dn+1)*L2*j1+(dn+1)*ell1+n1)
-                                        idx_la2.append((dn+1)*L2*j2+(dn+1)*ell2+n2)
-                                        idx_k1.append(k1)
-                                        idx_k2.append(k2)
-                                    for k2 in range(1,3):
+                                if periodic_dis(ell1, ell2, L2) <= dl:
+                                    for k2 in range(3):
                                         idx_la1.append((dn+1)*L2*j1+(dn+1)*ell1+n1)
                                         idx_la2.append((dn+1)*L2*j2+(dn+1)*ell2+n2)
                                         idx_k1.append(k1)
@@ -194,7 +187,7 @@ class PhaseHarmonics2d(object):
         # k2 = 2^(j2-j1)±dk
         # j1+1 <= j2 <= min(j1+dj,J-1)
         for n1 in range(dn+1):
-            for n2 in range(dn+1):
+            for n2 in range(1):
                 for j1 in range(J):
                     for ell1 in range(L2):
                         k1 = 1
