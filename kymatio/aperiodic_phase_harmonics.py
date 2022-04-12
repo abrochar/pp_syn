@@ -13,7 +13,7 @@ import torch
 import numpy as np
 import scipy.io as sio
 #import torch.nn.functional as F
-from .backend import cdgmm, Modulus, fft, DivInitStdRot, \
+from .backend import cdgmm, Modulus, fft, DivInitStd, \
     Pad, SubInitSpatialMeanC, PhaseHarmonics2, mulcu, \
     shift_filt, maskns
 #from .filter_bank import filter_bank
@@ -58,6 +58,7 @@ class PhaseHarmonics2d(object):
 
     def filters_tensor(self):
         J = self.J
+        M, N = self.M, self.N
         L = self.L
         L2 = L*2
 

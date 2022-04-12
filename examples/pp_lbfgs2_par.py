@@ -1,37 +1,32 @@
 import numpy as np
 import torch
-import matplotlib.pyplot as plt
-from torch.autograd import grad
-import scipy.optimize as opt
-import torch.nn.functional as F
 import argparse
 import scipy.io
 import sys,os
-# here, put the path to the directory
-sys.path.append(os.getcwd()) 
-# '/home/sixzhang/pp_syn/')
+sys.path.append(os.getcwd())
 #sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 from utils_gpu import pos_to_im3
 
+
+# choose parameters
 parser = argparse.ArgumentParser()
 parser.add_argument('--data', default='voronoi')
 parser.add_argument('--res', type=int, default=128)
 parser.add_argument('--nGPU', type=int, default=1)
 parser.add_argument('--dft', type=bool, default=False)
 parser.add_argument('--sw', type=bool, default=False)
-parser.add_argument('--periodic', type=bool, default=True)
-parser.add_argument('--normalize', type=bool, default=False)
+parser.add_argument('--aperiodic', default=False, action='store_true')
+parser.add_argument('--normalize', default=False, action='store_true')
 opts = parser.parse_args()
 
-# to fix random seed
 
+# to fix random seed
 #torch.manual_seed(999)
 #torch.cuda.manual_seed_all(999)
 #torch.backends.cudnn.deterministic = True
 
 
 # import the functions to compute the loss and the optimizer (L-BFGS)
-
 if opts.nGPU == 1:
     from lbfgs2_routine import call_lbfgs2_routine, \
         obj_func_id, obj_func, dft
@@ -41,7 +36,6 @@ else :
 
 
 # load the observation, in a square window of size 'res'
-
 res = opts.res
 if opts.data == 'voronoi':
     filename = './data/voronoi.txt'
@@ -49,21 +43,18 @@ if opts.data == 'voronoi':
 elif opts.data == 'turbulence':
     filename = './data/turbulence.txt'
     pos = res*np.loadtxt(fname=filename, delimiter=' ', skiprows=1, usecols=(1,2))/256
-
 x_ = torch.from_numpy(pos).type(torch.float).cuda()
 nb_points = pos.shape[0]
 
 
 # define some constants necessary for discrete computation of the descriptor
-
 res_ = torch.tensor(res).type(torch.float).cuda()
 Mx_ =  torch.arange(0, res).type(torch.float).cuda()
 My_ = torch.arange(0, res).type(torch.float).cuda()
 pi_ = torch.from_numpy(np.array([np.pi])).float().cuda()
 
 
-# Parameters for transforms
-
+# Parameters for the transform
 J = 4
 L = 4
 M, N = res, res
@@ -76,24 +67,29 @@ nb_restarts = 0
 nGPU = opts.nGPU
 maxite = 100
 factr = 1e3
+# additional parameters for regularization
 sw = opts.sw
 nb_dir = 16
 reg_par = 1e0
 
 # wavelet phase harmonics moments w/o nomrlization, w/o periodicity
 
-if opts.normalize and opts.periodic:
+if opts.normalize and not opts.aperiodic:
     from kymatio.phase_harmonics_norm \
         import PhaseHarmonics2d
-elif opts.normalize and not opts.periodic:
+    print('periodic norm')
+elif opts.normalize and opts.aperiodic:
     from kymatio.aperiodic_phase_harmonics_norm \
         import PhaseHarmonics2d
-elif not opts.normalize and opts.periodic:
+    print('aperiodic norm')
+elif not opts.normalize and not opts.aperiodic:
     from kymatio.phase_harmonics \
         import PhaseHarmonics2d
+    print('periodic')
 else:
     from kymatio.aperiodic_phase_harmonics \
         import PhaseHarmonics2d
+    print('aperiodic')
 
 # streams are only needed for multi-gpu computations
 wph_streams = []

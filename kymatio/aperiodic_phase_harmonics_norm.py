@@ -13,9 +13,9 @@ import torch
 import numpy as np
 import scipy.io as sio
 #import torch.nn.functional as F
-from .backend import cdgmm, Modulus, fft, DivInitStdRot, \
+from .backend import cdgmm, Modulus, fft, DivInitStd, \
     Pad, SubInitSpatialMeanC, PhaseHarmonics2, mulcu, \
-    shift_filt, maskns
+    shift_filt, maskns, padc
 #from .filter_bank import filter_bank
 from .utils import fft2_c2c, ifft2_c2c, periodic_dis
 torch.backends.cudnn.deterministic = True
@@ -34,12 +34,9 @@ class PhaseHarmonics2d(object):
             raise (ValueError('delta_l must be <= L'))
 
         self.pre_pad = False # no padding
-        self.cache = False # cache filter bank
         self.build()
 
     def build(self):
-        check_for_nan = False # True
-        #self.meta = None
         self.modulus = Modulus()
         self.pad = Pad(0, pre_pad = self.pre_pad)
         self.phase_harmonics = PhaseHarmonics2.apply
@@ -60,6 +57,7 @@ class PhaseHarmonics2d(object):
 
     def filters_tensor(self):
         J = self.J
+        M, N = self.M, self.N
         L = self.L
         L2 = L*2
 
@@ -263,8 +261,8 @@ class PhaseHarmonics2d(object):
         # nb=batch number
         # nc=number of color channels
         # input: (nb,nc,M,N)
-        x_c = pad(input) # add zeros to imag part -> (nb,nc,M,N,2)
-        hatx_c = fft2_c2c(x_c) # fft2 -> (nb,nc,M,N,2)
+        x_c = padc(input) # add zeros to imag part -> (nb,nc,M,N,2)
+        hatx_c = x_c.fft(2) # fft2 -> (nb,nc,M,N,2)
         #print('nbchannels',nb_channels)
         if self.chunk_id < self.nb_chunks:
             nb = hatx_c.shape[0]
@@ -279,7 +277,7 @@ class PhaseHarmonics2d(object):
                     hatx_bc = hatx_c[idxb,idxc,:,:,:] # (M,N,2)
                     hatxpsi_bc = cdgmm(hatpsi_la, hatx_bc) # (J,L2,M,N,2)
                     xpsi_bc = ifft2_c2c(hatxpsi_bc)
-                    xpsi_bc_m = x_psi_bc * self.masks.contiguous().view(J,1,M,N,1)
+                    xpsi_bc_m = xpsi_bc * self.masks.contiguous().view(J,1,M,N,1)
                     # reshape to (1,J*L,M,N,2)
                     xpsi_bc_flat = xpsi_bc_m.view(1,J*L2*(dn+1),M,N,2)
                     # select la1, et la2, P_c = number of |la1| in this chunk
