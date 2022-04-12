@@ -1,4 +1,6 @@
 
+Code for the paper "Particle gradient descent model for point process generation".
+
 # Setup
 
 export PATH="$PATH:~/anaconda3/bin"  
@@ -21,8 +23,10 @@ python examples/pp_lbfgs2_par.py
 ```
 - aperiodic, or turbulence:
 ```bash
-python examples/pp_lbfgs2_par.py --periodic False --data turbulence
+python examples/pp_lbfgs2_par.py --aperiodic --data turbulence
 ```
 
 # Note
 - The pytorch version should be adapted to your GPU environment, and it should not exceed 1.7.1.
+
+- This is a beta version. The repository will be updated soon to allow to reproduce the results form the paper.

@@ -19,7 +19,6 @@ parser.add_argument('--aperiodic', default=False, action='store_true')
 parser.add_argument('--normalize', default=False, action='store_true')
 opts = parser.parse_args()
 
-
 # to fix random seed
 #torch.manual_seed(999)
 #torch.cuda.manual_seed_all(999)
